@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\API\PemerintahController;
+use App\Http\Controllers\API\AuthController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -13,8 +15,15 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::namespace('Api')->middleware(['api','throttle:3:1'])->group(function ($router) {
+    
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('refresh', [AuthController::class, 'refresh']);
+    Route::post('me', [AuthController::class, 'me']);
 
-Route::post('pemerintah-pengguna',[PemerintahController::class, 'user']);
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
 });
+Route::get('pemerintah-pengguna',[PemerintahController::class, 'user'])->middleware('isAdmin');
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
